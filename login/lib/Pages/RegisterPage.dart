@@ -37,12 +37,28 @@ class RegisterPage extends StatelessWidget {
         'userPw': userPw,
       },
     );
-
-    if (response.statusCode == 200) {
-      print('회원가입 성공!');
-    } else {
-      print('오류 발생: ${response.statusCode}');
-    }
+ if (response.statusCode == 200) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('성공'),
+          content: Text('회원가입이 완료되었습니다!'),
+          actions: [
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop(); // 닫기
+                Navigator.of(context).pop(); // 이전 화면으로 돌아가기
+              },
+            ),
+          ],
+        );
+      },
+    );
+  } else {
+    print('오류 발생: ${response.statusCode}');
+  }
   }
 
   @override
