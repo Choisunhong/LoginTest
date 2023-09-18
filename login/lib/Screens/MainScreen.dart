@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../Member/MemberDTO.dart';
+
 
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
-
+  const MainScreen({Key? key, required this.mainloginMember}) : super(key: key);
+  final MemberDTO mainloginMember;
   @override
    _MainScreenState createState() => _MainScreenState();
 }
@@ -18,6 +20,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     _controller=TabController(length: 4, vsync: this,initialIndex: 0);
   }
   Widget build(BuildContext context) {
+    final loginMember = widget.mainloginMember;
     return Scaffold(
       appBar: AppBar(//앱바 수정상황
         backgroundColor:const Color(0xFF39E64F),
@@ -61,13 +64,21 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
         children: [
           Center(child: Text("Tab 1 Content")),
           Center(child: Text("Tab 2 Content")),
-          Center(child: Text("Tab 3 Content")),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('ID: ${loginMember.id}'),
+                Text('Name: ${loginMember.userName}'),
+                Text('Password: ${loginMember.userPw}'),
+              ],
+            ),
+          ),
           Center(child: Text("Tab 4 Content")),
       ],),
        bottomNavigationBar: TabBar(
           controller: _controller,
           indicatorColor: Colors.black,
-          
           tabs: [
             Tab(text: "친구목록"),
             Tab(text: "채팅"),
