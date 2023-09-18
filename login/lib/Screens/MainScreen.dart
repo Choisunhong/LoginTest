@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../Member/MemberDTO.dart';
+import '../Pages/FriendList.dart';
 
 
 
@@ -62,7 +63,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       body: TabBarView(
         controller:_controller,
         children: [
-          Center(child: Text("Tab 1 Content")),
+          FriendList(loginId: loginMember.id),
           Center(child: Text("Tab 2 Content")),
           Center(
             child: Column(
