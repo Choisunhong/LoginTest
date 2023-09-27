@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../Member/MemberDTO.dart';
+import '../Member/Member.dart';
 import '../Screens/MainScreen.dart';
 
 class LoginPage extends StatelessWidget {
@@ -45,7 +45,7 @@ class LoginPage extends StatelessWidget {
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
-      final MemberDTO loginMember = MemberDTO.fromJson(responseData);//로그인 된 멤버 의 정보를 담는 객체에 정보 넣기
+      final Member loginMember = Member.fromJson(responseData);//로그인 된 멤버 의 정보를 담는 객체에 정보 넣기
 
       
       //int memberId = loginMemeber.id; 이런식으로 데이터사용

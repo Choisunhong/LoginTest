@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import '../Member/MemberDTO.dart';
+import '../Member/Member.dart';
+import 'IndividualPage.dart';
 
 class FriendList extends StatefulWidget {
   const FriendList({Key? key, required this.loginId}) : super(key: key);
@@ -14,12 +15,12 @@ class FriendList extends StatefulWidget {
 }
 
 class _FriendListState extends State<FriendList> {
-  List<MemberDTO> friendList = []; // 친구 목록을 저장할 리스트
+  List<Member> friendList = [];
 
   @override
   void initState() {
     super.initState();
-    fetchFriends(); // initState에서 친구 목록을 불러옴
+    fetchFriends(); 
   }
 
   void fetchFriends() async {
@@ -28,14 +29,14 @@ class _FriendListState extends State<FriendList> {
 
     if (response.statusCode == 200) {
       List<dynamic> responseData = json.decode(response.body);
-      List<MemberDTO> friends =
-          responseData.map((data) => MemberDTO.fromJson(data)).toList();
+      List<Member> friends =
+          responseData.map((data) => Member.fromJson(data)).toList();
 
       setState(() {
         friendList = friends;
       });
     } else {
-     print('오류 발생: ${response.statusCode}');
+      print('오류 발생: ${response.statusCode}');
     }
   }
 
@@ -48,13 +49,15 @@ class _FriendListState extends State<FriendList> {
           return Column(
             children: [
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  _showCreateChatRoom(context, index);
+                },
                 child: ListTile(
                   leading: CircleAvatar(
                     radius: 20,
                     backgroundColor: Color(0xFF39E64F),
                     child: Text(
-                      friendList[index].userName[0], 
+                      friendList[index].userName[0],
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
@@ -83,4 +86,59 @@ class _FriendListState extends State<FriendList> {
       ),
     );
   }
+Future<String> createChatRoom() async {
+  try {
+    Uri createRoomUrl = Uri.parse('http://localhost:8080/chatRoom/create'); 
+    final response = await http.post(createRoomUrl); 
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseData = json.decode(response.body);
+      String roomIdValue = responseData["id"];
+      return roomIdValue;
+    } else {
+      print('Failed to create chat room');
+      return '11';
+    }
+  } catch (error) {
+    print('Error during chat room creation: $error');
+    return '22';
+  }
+}
+
+  void _showCreateChatRoom(BuildContext context, int index) async {
+     String roomIdValue = await createChatRoom();
+    // ignore: use_build_context_synchronously
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("채팅방 생성"),
+            content: Text("1:1 채팅방을 생성하시겠습니까?"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("취소"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => IndividualPage(
+                        user1: widget.loginId,
+                        user2: friendList[index].id,
+                        roomId: roomIdValue,
+                      ),
+                    ),
+                  );
+                },
+                child: Text("생성"),
+              )
+            ],
+          );
+        });
+  }
+  
 }

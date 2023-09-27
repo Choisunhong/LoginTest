@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../Member/MemberDTO.dart';
+import '../Member/Member.dart';
 import '../Pages/FriendList.dart';
 
 
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key, required this.mainloginMember}) : super(key: key);
-  final MemberDTO mainloginMember;
+  final Member mainloginMember;
   @override
    _MainScreenState createState() => _MainScreenState();
 }
