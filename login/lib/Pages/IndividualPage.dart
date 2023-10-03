@@ -9,10 +9,14 @@ import 'package:intl/intl.dart';
 import '../Member/ChatMessage.dart';
 
 class IndividualPage extends StatefulWidget {
-  const IndividualPage({required this.user1, required this.user2, required this.roomId, super.key});
+  const IndividualPage(
+      {required this.user1,
+      required this.user2,
+      required this.roomId,
+      super.key});
   final int user1;
   final int user2;
-  final String roomId;
+  final Object roomId;
 
   @override
   State<IndividualPage> createState() => _IndividualPageState();
@@ -35,12 +39,13 @@ class SocketHandler {
     final String jsonMessage = jsonEncode(messageData);
 
     stompClient.send(
-      destination: '/pub/chat/message',
+      destination: 'pub/message/send',
       body: jsonMessage,
     );
   }
 }
 
+//사용자가 그방에있을떄
 class _IndividualPageState extends State<IndividualPage> {
   SocketHandler socketHandler = SocketHandler();
   TextEditingController messageController = TextEditingController();
@@ -50,39 +55,42 @@ class _IndividualPageState extends State<IndividualPage> {
     super.initState();
     _initSocketConnection();
   }
-
-  void _initSocketConnection() {
-    socketHandler.stompClient = StompClient(
-      config: StompConfig(
-        url: 'ws://localhost:8080/ws-stomp',
-        onConnect: (StompFrame connectFrame) {
-          print("Connected to WebSocket server!");
-          socketHandler.stompClient.subscribe(
-            destination: '/sub/chat/room/${widget.user1}/${widget.user2}',
-            headers: {},
-            callback: (frame) {
+void _initSocketConnection() {
+  socketHandler.stompClient = StompClient(
+    config: StompConfig(
+      url: 'ws://localhost:8080/ws-stomp',
+      onConnect: (StompFrame connectFrame) {
+        print("Connected to WebSocket server!");
+        socketHandler.stompClient.subscribe(
+          destination: '/sub/chat/room/${widget.roomId}',
+          headers: {},
+          callback: (frame) {
+            if (frame.body != null) {
               print('Received frame: ${frame.body}');
+              print('Received frame: ${widget.roomId}');
+              print('Received frame: ${widget.user1}');
+              print('Received frame: ${widget.user2}');
               setState(() {
                 try {
                   Map<String, dynamic> messageData = json.decode(frame.body!);
-                  ChatMessage receivedMessage =
-                      ChatMessage.fromJson(messageData);
+                  ChatMessage receivedMessage = ChatMessage.fromJson(messageData);
                   print('Received message: $receivedMessage');
                   chatMessages.add(receivedMessage);
                 } catch (e) {
                   print('Error while decoding message data: $e');
                 }
               });
-            },
-          );
-        },
-        webSocketConnectHeaders: {
-          "transports": ["websocket"],
-        },
-      ),
-    );
-    socketHandler.stompClient.activate();
-  }
+            }
+          },
+        );
+      },
+      webSocketConnectHeaders: {
+        "transports": ["websocket"],
+      },
+    ),
+  );
+  socketHandler.stompClient.activate();
+}
 
   void _sendMessage(String content) {
     final DateTime now = DateTime.now();

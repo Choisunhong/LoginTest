@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -86,27 +87,32 @@ class _FriendListState extends State<FriendList> {
       ),
     );
   }
-Future<String> createChatRoom() async {
-  try {
-    Uri createRoomUrl = Uri.parse('http://localhost:8080/chatRoom/create'); 
-    final response = await http.post(createRoomUrl); 
-
+Future<int> createChatRoom(int index) async {
+  try { 
+    final response = await http.post(
+      Uri.parse('http://localhost:8080/chatRoom/create'),
+      body: {
+        'user1': widget.loginId.toString(),
+        'user2': friendList[index].id.toString(),
+      },
+      ); 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseData = json.decode(response.body);
-      String roomIdValue = responseData["id"];
+      int roomIdValue = responseData['id'];
       return roomIdValue;
+      
     } else {
       print('Failed to create chat room');
-      return '11';
+      return 111111111111 ;
     }
   } catch (error) {
     print('Error during chat room creation: $error');
-    return '22';
+    return 22;
   }
 }
 
   void _showCreateChatRoom(BuildContext context, int index) async {
-     String roomIdValue = await createChatRoom();
+     Object roomIdValue = await createChatRoom(index);
     // ignore: use_build_context_synchronously
     showDialog(
         context: context,
