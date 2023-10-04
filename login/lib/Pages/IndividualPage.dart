@@ -39,7 +39,7 @@ class SocketHandler {
     final String jsonMessage = jsonEncode(messageData);
 
     stompClient.send(
-      destination: 'pub/message/send',
+      destination: '/pub/chat/message',
       body: jsonMessage,
     );
   }
@@ -55,54 +55,54 @@ class _IndividualPageState extends State<IndividualPage> {
     super.initState();
     _initSocketConnection();
   }
-void _initSocketConnection() {
-  socketHandler.stompClient = StompClient(
-    config: StompConfig(
-      url: 'ws://localhost:8080/ws-stomp',
-      onConnect: (StompFrame connectFrame) {
-        print("Connected to WebSocket server!");
-        socketHandler.stompClient.subscribe(
-          destination: '/sub/chat/room/${widget.roomId}',
-          headers: {},
-          callback: (frame) {
-            if (frame.body != null) {
-              print('Received frame: ${frame.body}');
-              print('Received frame: ${widget.roomId}');
-              print('Received frame: ${widget.user1}');
-              print('Received frame: ${widget.user2}');
+
+  void _initSocketConnection() {
+    socketHandler.stompClient = StompClient(
+      config: StompConfig(
+        url: 'ws://localhost:8080/ws-stomp',
+        onConnect: (StompFrame connectFrame) {
+          print("Connected to WebSocket server!");
+          socketHandler.stompClient.subscribe(
+            destination: '/sub/chat/room/${widget.roomId}',
+            headers: {},
+            callback: (frame) {
+              print('Received frame1: ${frame.body}');
+              print('Received frame2: ${widget.roomId}');
+              print('Received frame3: ${widget.user1}');
+              print('Received frame4: ${widget.user2}');
               setState(() {
-                try {
-                  Map<String, dynamic> messageData = json.decode(frame.body!);
-                  ChatMessage receivedMessage = ChatMessage.fromJson(messageData);
-                  print('Received message: $receivedMessage');
-                  chatMessages.add(receivedMessage);
-                } catch (e) {
-                  print('Error while decoding message data: $e');
-                }
+                    try { 
+                    Map<String, dynamic> messageData = json.decode(frame.body!);
+                    ChatMessage receivedMessage = ChatMessage.fromJson(messageData);
+                    print('Received message: $receivedMessage');
+                    chatMessages.add(receivedMessage);
+                      } catch (e,stackTrace) {
+                      print('error: $e');
+                      print('stack trace: $stackTrace');
+                    }
               });
-            }
-          },
-        );
-      },
-      webSocketConnectHeaders: {
-        "transports": ["websocket"],
-      },
-    ),
-  );
-  socketHandler.stompClient.activate();
-}
+            },
+          );
+        },
+        webSocketConnectHeaders: {
+          "transports": ["websocket"],
+        },
+      ),
+    );
+    socketHandler.stompClient.activate();
+  }
 
   void _sendMessage(String content) {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
 
     ChatMessage message = ChatMessage(
-      id: 0,
+      id: 1,
       content: content,
       roomId: widget.roomId.toString(),
       sender: widget.user1.toString(),
       receiver: widget.user2.toString(),
-      createdAt: formattedDate,
+      createdAt: formattedDate.toString(),
       messageType: MessageType.TALK,
     );
 
@@ -110,7 +110,7 @@ void _initSocketConnection() {
   }
 
   Widget _buildMessageWidget(ChatMessage message) {
-    bool isSentByUser = message.sender == widget.user1;
+    bool isSentByUser = message.sender == widget.user1.toString();
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -128,7 +128,7 @@ void _initSocketConnection() {
             margin: EdgeInsets.only(top: 5),
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isSentByUser ? Colors.blue : Colors.grey,
+              color: isSentByUser ? Colors.lightGreen : Colors.lightBlue,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -178,6 +178,7 @@ void _initSocketConnection() {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 215, 222, 226),
       appBar: AppBar(
+        backgroundColor: Colors.lightGreen,
         leadingWidth: 70,
         leading: InkWell(
           onTap: () {

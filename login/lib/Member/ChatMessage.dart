@@ -16,29 +16,20 @@ class ChatMessage {
     required this.createdAt,
     required this.messageType,
   });
-  factory ChatMessage.fromJson(Map<String, dynamic> json) {
-    return ChatMessage(
-      id: json['id'],
-      content: json['content'],
-      roomId: json['roomId'],
-      sender: json['sender'],
-      receiver: json['receiver'],
-      createdAt: json['createdAt'],
-      messageType: MessageType.values[json['messageType']],
-    );
-  }
+ factory ChatMessage.fromJson(Map<String, dynamic> json) {
+  return ChatMessage(
+    id: json['id'] ?? 0,
+    content: json['content'] ?? '',
+    roomId: json['roomId'] ?? '',
+    sender: json['sender'] ?? '',
+    receiver: json['receiver'] ?? '',
+    createdAt: json['createdAt'] ?? '',
+    messageType: (json['messageType'] != null && json['messageType'] < MessageType.values.length)
+      ? MessageType.values[json['messageType']]
+      : MessageType.TALK,
+  );
+}
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'content': content,
-      'roomId': roomId,
-      'sender': sender,
-      'receiver': receiver,
-      'createdAt': createdAt,
-      'messageType': messageType.index,
-    };
-  }
   
 }
 enum MessageType {

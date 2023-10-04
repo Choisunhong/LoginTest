@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login/Pages/ChatroomList.dart';
 
 import '../Member/Member.dart';
 import '../Pages/FriendList.dart';
@@ -64,7 +65,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
         controller:_controller,
         children: [
           FriendList(loginId: loginMember.id),
-          Center(child: Text("Tab 2 Content")),
+          ChatroomList(loginId: loginMember.id),
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
