@@ -112,7 +112,7 @@ Future<int> createChatRoom(int index) async {
 }
 
   void _showCreateChatRoom(BuildContext context, int index) async {
-     Object roomIdValue = await createChatRoom(index);
+    
     // ignore: use_build_context_synchronously
     showDialog(
         context: context,
@@ -128,18 +128,24 @@ Future<int> createChatRoom(int index) async {
                 child: Text("취소"),
               ),
               TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => IndividualPage(
-                        user1: widget.loginId,
-                        user2: friendList[index].id,
-                        roomId: roomIdValue,
-                      ),
+                onPressed: () async {
+              int roomIdValue = await createChatRoom(index);
+              Navigator.of(context).pop(); // 다이얼로그 닫기
+              if (roomIdValue != -1) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => IndividualPage(
+                      user1: widget.loginId,
+                      user2: friendList[index].id,
+                      roomId: roomIdValue,
                     ),
-                  );
-                },
+                  ),
+                );
+              } else {
+                print("채팅방 생성에 실패했습니다.");
+              }
+            },
                 child: Text("생성"),
               )
             ],

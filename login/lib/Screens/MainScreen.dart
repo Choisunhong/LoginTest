@@ -25,7 +25,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     final loginMember = widget.mainloginMember;
     return Scaffold(
       appBar: AppBar(//앱바 수정상황
-        backgroundColor:const Color(0xFF39E64F),
+        backgroundColor:Colors.lightGreen,
         title: Text("TeenTalk"),
         actions: [
           IconButton(icon: Icon(Icons.search), onPressed: () {}),

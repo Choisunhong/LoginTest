@@ -97,16 +97,17 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.green, title: Text('로그인')),
+      appBar: AppBar(backgroundColor: Colors.lightGreen, title: Text('로그인')),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
+              
               controller: userNameController,
               decoration: InputDecoration(
-                labelText: '사용자 이름',
+                labelText: '아이디',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.all(12.0),
               ),
