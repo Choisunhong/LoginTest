@@ -97,7 +97,7 @@ class _IndividualPageState extends State<IndividualPage> {
     final String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
 
     ChatMessage message = ChatMessage(
-      id: 1,
+      id: 0,
       content: content,
       roomId: widget.roomId.toString(),
       sender: widget.user1.toString(),
