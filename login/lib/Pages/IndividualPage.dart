@@ -6,6 +6,7 @@ import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 import 'package:intl/intl.dart';
 
+import 'package:http/http.dart' as http;
 import '../Member/ChatMessage.dart';
 
 class IndividualPage extends StatefulWidget {
@@ -50,10 +51,11 @@ class _IndividualPageState extends State<IndividualPage> {
   SocketHandler socketHandler = SocketHandler();
   TextEditingController messageController = TextEditingController();
   List<ChatMessage> chatMessages = [];
-
+ 
   void initState() {
     super.initState();
     _initSocketConnection();
+    //fetchChatMessages();
   }
 
   void _initSocketConnection() {
@@ -71,15 +73,16 @@ class _IndividualPageState extends State<IndividualPage> {
               print('Received frame3: ${widget.user1}');
               print('Received frame4: ${widget.user2}');
               setState(() {
-                    try { 
-                    Map<String, dynamic> messageData = json.decode(frame.body!);
-                    ChatMessage receivedMessage = ChatMessage.fromJson(messageData);
-                    print('Received message: $receivedMessage');
-                    chatMessages.add(receivedMessage);
-                      } catch (e,stackTrace) {
-                      print('error: $e');
-                      print('stack trace: $stackTrace');
-                    }
+                try {
+                  Map<String, dynamic> messageData = json.decode(frame.body!);
+                  ChatMessage receivedMessage =
+                      ChatMessage.fromJson(messageData);
+                  print('Received message: $receivedMessage');
+                  chatMessages.add(receivedMessage);
+                } catch (e, stackTrace) {
+                  print('error: $e');
+                  print('stack trace: $stackTrace');
+                }
               });
             },
           );
@@ -91,7 +94,25 @@ class _IndividualPageState extends State<IndividualPage> {
     );
     socketHandler.stompClient.activate();
   }
+/*채팅히스토리 불러오기
+void fetchChatMessages() async {
+  final response = await http.get(
+    Uri.parse('http://localhost:8080/message/find/${widget.roomId}'),
+  );
 
+  if (response.statusCode == 200) {
+    List<dynamic> responseData = json.decode(response.body);
+    List<ChatMessage> messages =
+        responseData.map((data) => ChatMessage.fromJson(data)).toList();
+
+    setState(() {
+      lastchatMessages = messages;
+
+    });
+  } else {
+    print('오류 발생: ${response.statusCode}');
+  }
+}*/
   void _sendMessage(String content) {
     final DateTime now = DateTime.now();
     final String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
@@ -103,44 +124,115 @@ class _IndividualPageState extends State<IndividualPage> {
       sender: widget.user1.toString(),
       receiver: widget.user2.toString(),
       createdAt: formattedDate.toString(),
-      messageType: MessageType.TALK,
+      messageType: MessageType.HATE_SPEECH,
     );
 
     socketHandler.sendChatMessage(message);
   }
+//유저이름 받아오기
+  Future<String> getUserName(int userId) async {
+    final response =
+        await http.get(Uri.parse('http://localhost:8080/user/$userId'));
 
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      return responseData['userName'];
+    } else {
+      throw Exception('Failed to load user name');
+    }
+  }
+  /*
+  Widget _buildlastMessageWidget(ChatMessage lastmessage) {
+    bool isSentByUser = lastmessage.sender == widget.user1.toString();
+    final String formattedDate = lastmessage.createdAt;
+    return FutureBuilder<String>(
+        future: getUserName(int.parse(lastmessage.sender)),
+        builder: (context, snapshot) {
+          String senderName = snapshot.data ?? '';
+          return Container(
+            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            alignment:
+                isSentByUser ? Alignment.centerRight : Alignment.centerLeft,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  senderName,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 5),
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: isSentByUser ? Colors.lightGreen : Colors.lightBlue,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    lastmessage.content,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Text(
+                  formattedDate,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 8,
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }*/
   Widget _buildMessageWidget(ChatMessage message) {
     bool isSentByUser = message.sender == widget.user1.toString();
-
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      alignment: isSentByUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            message.sender,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
+    final String formattedDate = message.createdAt;
+    return FutureBuilder<String>(
+        future: getUserName(int.parse(message.sender)),
+        builder: (context, snapshot) {
+          String senderName = snapshot.data ?? '';
+          return Container(
+            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            alignment:
+                isSentByUser ? Alignment.centerRight : Alignment.centerLeft,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  senderName,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 5),
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: isSentByUser ? Colors.lightGreen : Colors.lightBlue,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    message.content,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Text(
+                  formattedDate,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 8,
+                  ),
+                ),
+              ],
             ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 5),
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: isSentByUser ? Colors.lightGreen : Colors.lightBlue,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              message.content,
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+          );
+        });
   }
 
   Widget _buildInputField() {
@@ -201,6 +293,7 @@ class _IndividualPageState extends State<IndividualPage> {
             ],
           ),
         ),
+         title: Text('Room ID: ${widget.roomId}'),
       ),
       body: Column(
         children: [

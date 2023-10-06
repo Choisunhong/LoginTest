@@ -25,8 +25,15 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     final loginMember = widget.mainloginMember;
     return Scaffold(
       appBar: AppBar(//앱바 수정상황
-        backgroundColor:Colors.lightGreen,
-        title: Text("TeenTalk"),
+        automaticallyImplyLeading: false,
+        backgroundColor:Color(0xffD3D3D3),
+        title: SizedBox(
+        child: Image.asset(
+          "assets/textlogo.png",
+          width: 140,
+          height: 20,
+          ),
+      ),
         actions: [
           IconButton(icon: Icon(Icons.search), onPressed: () {}),
           PopupMenuButton<String>(
@@ -35,22 +42,6 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
             },
             itemBuilder: (BuildContext contesxt) {// 앱바 세부사항
               return [
-                PopupMenuItem(
-                  child: Text("New group"),
-                  value: "New group",
-                ),
-                PopupMenuItem(
-                  child: Text("New broadcast"),
-                  value: "New broadcast",
-                ),
-                PopupMenuItem(
-                  child: Text("TeenTalk Web"),
-                  value: "TeenTalk Web",
-                ),
-                PopupMenuItem(
-                  child: Text("Starred messages"),
-                  value: "Starred messages",
-                ),
                 PopupMenuItem(
                   child: Text("Settings"),
                   value: "Settings",
@@ -61,23 +52,27 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
         ],
         
       ),
-      body: TabBarView(
-        controller:_controller,
-        children: [
-          FriendList(loginId: loginMember.id),
-          ChatroomList(loginId: loginMember.id),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('ID: ${loginMember.id}'),
-                Text('Name: ${loginMember.userName}'),
-                Text('Password: ${loginMember.userPw}'),
-              ],
-            ),
-          ),
-          Center(child: Text("Tab 4 Content")),
-      ],),
+      body: Container(
+  margin: EdgeInsets.symmetric(vertical: 2),
+  child: TabBarView(
+    controller: _controller,
+    children: [
+      FriendList(loginId: loginMember.id),
+      ChatroomList(loginId: loginMember.id),
+      Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('ID: ${loginMember.id}'),
+            Text('Name: ${loginMember.userName}'),
+            Text('Password: ${loginMember.userPw}'),
+          ],
+        ),
+      ),
+      Center(child: Text("Tab 4 Content")),
+    ],
+  ),
+),
        bottomNavigationBar: TabBar(
           controller: _controller,
           indicatorColor: Colors.black,

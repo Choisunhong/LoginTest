@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -21,7 +20,7 @@ class _FriendListState extends State<FriendList> {
   @override
   void initState() {
     super.initState();
-    fetchFriends(); 
+    fetchFriends();
   }
 
   void fetchFriends() async {
@@ -54,17 +53,13 @@ class _FriendListState extends State<FriendList> {
                   _showCreateChatRoom(context, index);
                 },
                 child: ListTile(
-                  leading: CircleAvatar(
+                  leading: const CircleAvatar(
                     radius: 20,
-                    backgroundColor: Color(0xFF39E64F),
-                    child: Text(
-                      friendList[index].userName[0],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    backgroundColor: Color.fromARGB(238, 45, 218, 68),
+                    child: Icon(
+                      Icons.account_circle,
+                      color: Colors.white,
+                      size: 18,
                     ),
                   ),
                   title: Text(
@@ -76,81 +71,101 @@ class _FriendListState extends State<FriendList> {
                   ),
                 ),
               ),
-              Divider(
-                thickness: 1,
-                height: 1,
-                color: Colors.grey,
-              ),
             ],
           );
         },
       ),
     );
   }
-Future<int> createChatRoom(int index) async {
-  try { 
-    final response = await http.post(
-      Uri.parse('http://localhost:8080/chatRoom/create'),
-      body: {
-        'user1': widget.loginId.toString(),
-        'user2': friendList[index].id.toString(),
-      },
-      ); 
-    if (response.statusCode == 200) {
-      Map<String, dynamic> responseData = json.decode(response.body);
-      int roomIdValue = responseData['id'];
-      return roomIdValue;
-      
-    } else {
-      print('Failed to create chat room');
-      return 111111111111 ;
-    }
-  } catch (error) {
-    print('Error during chat room creation: $error');
-    return 22;
-  }
-}
 
-  void _showCreateChatRoom(BuildContext context, int index) async {
-    
-    // ignore: use_build_context_synchronously
-    showDialog(
+  Future<int> createChatRoom(int index) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:8080/chatRoom/create'),
+        body: {
+          'user1': widget.loginId.toString(),
+          'user2': friendList[index].id.toString(),
+        },
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseData = json.decode(response.body);
+        int roomIdValue = responseData['id'];
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("채팅방 생성"),
+              content: Text("1:1 채팅방을 생성하시겠습니까?"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => IndividualPage(
+                          user1: widget.loginId,
+                          user2: friendList[index].id,
+                          roomId: roomIdValue,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text("생성"),
+                )
+              ],
+            );
+          },
+        );
+
+        return roomIdValue;
+      } else if (response.statusCode == 409) {
+        Map<String, dynamic> responseData = json.decode(response.body);
+        int roomIdValue = responseData['id'];
+        return roomIdValue;
+      } else {
+        return -1;
+      }
+    } catch (error) {
+      print('Error during chat room creation: $error');
+
+      showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("채팅방 생성"),
-            content: Text("1:1 채팅방을 생성하시겠습니까?"),
+            title: Text("에러 발생"),
+            content: Text("채팅방 생성 중 오류가 발생했습니다."),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text("취소"),
+                child: Text("확인"),
               ),
-              TextButton(
-                onPressed: () async {
-              int roomIdValue = await createChatRoom(index);
-              Navigator.of(context).pop(); // 다이얼로그 닫기
-              if (roomIdValue != -1) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => IndividualPage(
-                      user1: widget.loginId,
-                      user2: friendList[index].id,
-                      roomId: roomIdValue,
-                    ),
-                  ),
-                );
-              } else {
-                print("채팅방 생성에 실패했습니다.");
-              }
-            },
-                child: Text("생성"),
-              )
             ],
           );
-        });
+        },
+      );
+      return -1;
+    }
   }
-  
+
+  void _showCreateChatRoom(BuildContext context, int index) async {
+    int roomIdValue = await createChatRoom(index);
+    Navigator.of(context).pop(); // 다이얼로그 닫기
+    if (roomIdValue != -1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => IndividualPage(
+            user1: widget.loginId,
+            user2: friendList[index].id,
+            roomId: roomIdValue,
+          ),
+        ),
+      );
+    } else {
+      print("채팅방 생성에 실패했습니다.");
+    }
+  }
 }

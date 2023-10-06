@@ -18,7 +18,7 @@ class ChatMessage {
   });
  factory ChatMessage.fromJson(Map<String, dynamic> json) {
   return ChatMessage(
-    id: json['id'] ?? 0,
+    id: json['id'],
     content: json['content'] ?? '',
     roomId: json['roomId'] ?? '',
     sender: json['sender'] ?? '',
