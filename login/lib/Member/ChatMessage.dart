@@ -1,3 +1,4 @@
+
 class ChatMessage {
   final int id; // 메시지 ID
   final String content; // 메시지 내용
@@ -20,7 +21,7 @@ class ChatMessage {
   return ChatMessage(
     id: json['id'],
     content: json['content'] ?? '',
-    roomId: json['roomId'] ?? '',
+    roomId: json['roomId'] != null ? json['roomId'].toString() : '',
     sender: json['sender'] ?? '',
     receiver: json['receiver'] ?? '',
     createdAt: json['createdAt'] ?? '',
@@ -34,7 +35,8 @@ class ChatMessage {
 }
 enum MessageType {
   TALK, 
-  HATE_SPEECH, 
+  HATE,
+  CLEAN, 
 }
 
 extension MessageTypeExtension on MessageType {
@@ -42,7 +44,7 @@ extension MessageTypeExtension on MessageType {
     switch (this) {
       case MessageType.TALK:
         return 0;
-      case MessageType.HATE_SPEECH:
+      case MessageType.HATE:
         return 1;
       default:
         throw Exception("Unknown MessageType: $this");
@@ -54,7 +56,7 @@ extension MessageTypeExtension on MessageType {
       case 0:
         return MessageType.TALK;
       case 1:
-        return MessageType.HATE_SPEECH;
+        return MessageType.HATE;
       default:
         throw Exception("Unknown MessageType value: $value");
     }
