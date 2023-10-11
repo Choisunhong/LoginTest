@@ -28,7 +28,7 @@ class _FriendListState extends State<FriendList> {
         Uri.parse('http://localhost:8080/user/${widget.loginId}/findFriends'));
 
     if (response.statusCode == 200) {
-      List<dynamic> responseData = json.decode(response.body);
+      List<dynamic> responseData = json.decode(utf8.decode(response.bodyBytes));
       List<Member> friends =
           responseData.map((data) => Member.fromJson(data)).toList();
 

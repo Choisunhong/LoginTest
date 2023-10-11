@@ -131,63 +131,18 @@ void fetchChatMessages() async {
   }
 //유저이름 받아오기
   Future<String> getUserName(int userId) async {
-    final response =
-        await http.get(Uri.parse('http://localhost:8080/user/$userId'));
+  final response = await http.get(
+    Uri.parse('http://localhost:8080/user/$userId'),
+    headers: {"Accept-Charset": "utf-8"}  // 추가: 한글 인코딩 설정
+  );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData = json.decode(response.body);
+      final Map<String, dynamic> responseData = json.decode(utf8.decode(response.bodyBytes));
       return responseData['userName'];
     } else {
       throw Exception('Failed to load user name');
     }
   }
-  /*
-  Widget _buildlastMessageWidget(ChatMessage lastmessage) {
-    bool isSentByUser = lastmessage.sender == widget.user1.toString();
-    final String formattedDate = lastmessage.createdAt;
-    return FutureBuilder<String>(
-        future: getUserName(int.parse(lastmessage.sender)),
-        builder: (context, snapshot) {
-          String senderName = snapshot.data ?? '';
-          return Container(
-            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            alignment:
-                isSentByUser ? Alignment.centerRight : Alignment.centerLeft,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  senderName,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 5),
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: isSentByUser ? Colors.lightGreen : Colors.lightBlue,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    lastmessage.content,
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                Text(
-                  formattedDate,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 8,
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
-  }*/
   Widget _buildMessageWidget(ChatMessage message) {
     bool isSentByUser = message.sender == widget.user1.toString();
     final String formattedDate = message.createdAt;
