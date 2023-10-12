@@ -135,20 +135,36 @@ class _IndividualPageState extends State<IndividualPage> {
 
    
   }
+   Future<String> getUserName(int userId) async {
+  final response = await http.get(
+    Uri.parse('http://localhost:8080/user/$userId'),
+    headers: {"Accept-Charset": "utf-8"}  // 추가: 한글 인코딩 설정
+  );
 
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(utf8.decode(response.bodyBytes));
+      return responseData['userName'];
+    } else {
+      throw Exception('Failed to load user name');
+    }
+  }
   Widget _buildMessageWidget(ChatMessage message) {
     bool isSentByUser = message.sender == widget.user1.toString();
-    Color backgroundColor = Colors.lightGreen;
-
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      alignment: isSentByUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Column(
+    final String formattedDate = message.createdAt;
+    return FutureBuilder<String>(
+        future: getUserName(int.parse(message.sender)),
+        builder: (context, snapshot) {
+          String senderName = snapshot.data ?? '';
+          return Container(
+            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            alignment:
+                isSentByUser ? Alignment.centerRight : Alignment.centerLeft,
+            child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isSentByUser)
             Text(
-              message.sender,
+              senderName,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -157,7 +173,7 @@ class _IndividualPageState extends State<IndividualPage> {
             margin: EdgeInsets.only(top: 5),
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: backgroundColor,
+              color: Colors.lightGreen,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -169,8 +185,11 @@ class _IndividualPageState extends State<IndividualPage> {
           ),
         ],
       ),
-    );
+          );
+        });
   }
+  //유저 이름 불러오기
+  /* */
 
   Widget _buildInputField() {
     return Container(
