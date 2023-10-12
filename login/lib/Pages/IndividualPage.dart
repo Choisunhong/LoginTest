@@ -37,45 +37,14 @@ class SocketHandler {
       'create_at': message.createdAt,
       'msgType': message.msgType.toString().split('.').last,
     };
-    
+
     final String jsonMessage = jsonEncode(messageData);
 
     stompClient.send(
       destination: '/pub/chat/message',
       body: jsonMessage,
-    );   
-  }
-   void handleHateMessageReceived(BuildContext context,ChatMessage message) {
-    print('Received Message Type: ${message.msgType}');
-    showHateAlert(context);
-    replaceHateMessageContent(message);
-  }
-  void showHateAlert(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('경고'),
-          content: Text('해당 메시지는 삭제되었습니다.'),
-          actions: [
-            TextButton(
-              child: Text('확인'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
-
-  void replaceHateMessageContent(ChatMessage message) {
-    if (message.msgType == MessageType.HATE) {
-      message.content = '삭제된 메세지입니다.';
-    }
-  }
-  
 }
 
 class _IndividualPageState extends State<IndividualPage> {
@@ -91,7 +60,8 @@ class _IndividualPageState extends State<IndividualPage> {
     _initSocketConnection();
     fetchChatMessages();
   }
- //stomp socket 연결하기 
+
+  //stomp socket 연결하기
   void _initSocketConnection() {
     socketHandler.stompClient = StompClient(
       config: StompConfig(
@@ -126,6 +96,7 @@ class _IndividualPageState extends State<IndividualPage> {
     );
     socketHandler.stompClient.activate();
   }
+
   //과거 채팅내역 fetch
   void fetchChatMessages() async {
     final response = await http.get(
@@ -152,7 +123,6 @@ class _IndividualPageState extends State<IndividualPage> {
     } else {
       print('오류 발생: ${response.statusCode}');
     }
-    
   }
 
   void _sendMessage(String content) {
@@ -170,7 +140,6 @@ class _IndividualPageState extends State<IndividualPage> {
     );
     socketHandler.sendChatMessage(message);
   }
- 
 
   Future<String> getUserName(int userId) async {
     final response = await http.get(
@@ -185,22 +154,23 @@ class _IndividualPageState extends State<IndividualPage> {
       throw Exception('Failed to load user name');
     }
   }
+
 //채팅메세지UI 위젯
-  // 채팅메세지UI 위젯
-Widget _buildMessageWidget(ChatMessage message) {
-  bool isSentByUser = message.sender == widget.user1.toString();
-  final String formattedDate = message.createdAt;
-  return FutureBuilder<String>(
-    future: getUserName(int.parse(message.sender)),
-    builder: (context, snapshot) {
-      String senderName = snapshot.data ?? '';
-      Color backgroundColor = message.msgType == MessageType.HATE
-          ? Colors.red
-          : Colors.lightGreen;
-         
-      return Container(
+  Widget _buildMessageWidget(ChatMessage message) {
+    bool isSentByUser = message.sender == widget.user1.toString();
+    final String formattedDate = message.createdAt;
+    return FutureBuilder<String>(
+      future: getUserName(int.parse(message.sender)),
+      builder: (context, snapshot) {
+        String senderName = snapshot.data ?? '';
+        Color backgroundColor = message.msgType == MessageType.HATE
+            ? Colors.red
+            : Colors.lightGreen;
+
+        return Container(
           margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          alignment: isSentByUser ? Alignment.centerRight : Alignment.centerLeft,
+          alignment:
+              isSentByUser ? Alignment.centerRight : Alignment.centerLeft,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -228,14 +198,10 @@ Widget _buildMessageWidget(ChatMessage message) {
             ],
           ),
         );
-      
-    },
-  );
-}
+      },
+    );
+  }
   //유저 이름 불러오기
-  /*if (message.msgType == MessageType.HATE) {
-            socketHandler.handleHateMessageReceived(context,message);
-          } */
 
   Widget _buildInputField() {
     return Container(
@@ -322,6 +288,27 @@ Widget _buildMessageWidget(ChatMessage message) {
                   return _buildMessageWidget(message);
                 } else {
                   final message = chatMessages[index - lastchatMessages.length];
+                  if (message.msgType == MessageType.HATE) {
+                    WidgetsBinding.instance?.addPostFrameCallback((_) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('경고'),
+                            content: Text('혐오발언이 감지되었습니다.'),
+                            actions: [
+                              TextButton(
+                                child: Text('확인'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    });
+                  }
                   return _buildMessageWidget(message);
                 }
               },
