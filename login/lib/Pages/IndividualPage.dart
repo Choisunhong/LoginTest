@@ -61,6 +61,26 @@ class _IndividualPageState extends State<IndividualPage> {
     fetchChatMessages();
   }
 
+  void _showHateDialog() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('경고'),
+            content: Text('혐오발언이 감지되었습니다.'),
+            actions: [
+              TextButton(
+                child: Text('확인'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+  }
+
   //stomp socket 연결하기
   void _initSocketConnection() {
     socketHandler.stompClient = StompClient(
@@ -78,7 +98,10 @@ class _IndividualPageState extends State<IndividualPage> {
                     Map<String, dynamic> messageData = json.decode(frame.body!);
                     ChatMessage receivedMessage =
                         ChatMessage.fromJson(messageData);
-
+                    if (receivedMessage.msgType == MessageType.HATE&&receivedMessage.sender != widget.user2.toString()) {
+                      _showHateDialog();
+                    }
+                    
                     chatMessages.add(receivedMessage);
                   } catch (e, stackTrace) {
                     print('error: $e');
@@ -139,6 +162,7 @@ class _IndividualPageState extends State<IndividualPage> {
       msgType: MessageType.TALK,
     );
     socketHandler.sendChatMessage(message);
+    print('Sent MessageType: ${message.msgType}');
   }
 
   Future<String> getUserName(int userId) async {
@@ -237,7 +261,7 @@ class _IndividualPageState extends State<IndividualPage> {
   @override
   Widget build(BuildContext context) {
     double calculateScrollThreshold(BuildContext context) {
-      return MediaQuery.of(context).size.height * 0.8;
+      return MediaQuery.of(context).size.height * 0.9;
     }
 
     WidgetsBinding.instance?.addPostFrameCallback((_) {
@@ -288,27 +312,6 @@ class _IndividualPageState extends State<IndividualPage> {
                   return _buildMessageWidget(message);
                 } else {
                   final message = chatMessages[index - lastchatMessages.length];
-                  if (message.msgType == MessageType.HATE) {
-                    WidgetsBinding.instance?.addPostFrameCallback((_) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('경고'),
-                            content: Text('혐오발언이 감지되었습니다.'),
-                            actions: [
-                              TextButton(
-                                child: Text('확인'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    });
-                  }
                   return _buildMessageWidget(message);
                 }
               },

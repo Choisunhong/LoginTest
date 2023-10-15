@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class PersonalChatroomList{
   final int roomid;
   final String otherPersonName;
-  final String otherPersonID;
+  final int otherPersonID;
 
  PersonalChatroomList({
  required this.roomid,
