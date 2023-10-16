@@ -167,7 +167,7 @@ class _IndividualPageState extends State<IndividualPage> {
 
   Future<String> getUserName(int userId) async {
     final response = await http.get(
-      Uri.parse('http://localhost:8080/user/$userId'),
+      Uri.parse('http://localhost:8080/member/$userId'),
     );
 
     if (response.statusCode == 200) {

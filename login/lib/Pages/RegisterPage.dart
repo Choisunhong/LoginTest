@@ -31,7 +31,7 @@ class RegisterPage extends StatelessWidget {
     }
 
     final response = await http.post(
-      Uri.parse('http://localhost:8080/user/signup'),
+      Uri.parse('http://localhost:8080/member/signup'),
       body: {
         'userName': userName,
         'userPw': userPw,

@@ -36,7 +36,7 @@ class LoginPage extends StatelessWidget {
     }
 
     final response = await http.post(
-      Uri.parse('http://localhost:8080/user/login'),
+      Uri.parse('http://localhost:8080/member/login'),
       body: {
         'userName': userName,
         'userPw': userPw,

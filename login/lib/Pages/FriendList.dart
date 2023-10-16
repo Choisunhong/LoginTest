@@ -25,7 +25,7 @@ class _FriendListState extends State<FriendList> {
 
   void fetchFriends() async {
     final response = await http.get(
-        Uri.parse('http://localhost:8080/user/${widget.loginId}/findFriends'));
+        Uri.parse('http://localhost:8080/member/${widget.loginId}/findFriends'));
 
     if (response.statusCode == 200) {
       List<dynamic> responseData = json.decode(utf8.decode(response.bodyBytes));
