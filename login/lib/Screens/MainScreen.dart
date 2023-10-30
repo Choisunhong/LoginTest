@@ -73,7 +73,23 @@ class _MainScreenState extends State<MainScreen>
         },
       );
     } else {
-      // 그 외의 오류
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('친구 추가 실패'),
+            content: Text('존재하지 않은 회원입니다.'),
+            actions: [
+              TextButton(
+                child: Text('확인'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
       print('오류 발생: ${response.statusCode}');
     }
   }
@@ -135,31 +151,7 @@ class _MainScreenState extends State<MainScreen>
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TabBar(
-            controller: _controller,
-            indicatorColor: const Color(0xFF51C878),
-            tabs: [
-              Tab(
-                icon: Icon(
-                  Icons.home,
-                  color: const Color(0xFF51C878),
-                ),
-              ),
-              Tab(
-                icon: Icon(
-                  Icons.chat,
-                  color: const Color(0xFF51C878),
-                ),
-              ),
-              Tab(
-                icon: Icon(
-                  Icons.settings,
-                  color: const Color(0xFF51C878),
-                ),
-              ),
-            ],
-          ),
-          Row(
+           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
@@ -197,6 +189,30 @@ class _MainScreenState extends State<MainScreen>
                     },
                   );
                 },
+              ),
+            ],
+          ),
+          TabBar(
+            controller: _controller,
+            indicatorColor: const Color(0xFF51C878),
+            tabs: [
+              Tab(
+                icon: Icon(
+                  Icons.home,
+                  color: const Color(0xFF51C878),
+                ),
+              ),
+              Tab(
+                icon: Icon(
+                  Icons.chat,
+                  color: const Color(0xFF51C878),
+                ),
+              ),
+              Tab(
+                icon: Icon(
+                  Icons.settings,
+                  color: const Color(0xFF51C878),
+                ),
               ),
             ],
           ),

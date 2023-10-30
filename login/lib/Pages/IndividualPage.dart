@@ -101,7 +101,6 @@ class _IndividualPageState extends State<IndividualPage> {
                     if (receivedMessage.msgType == MessageType.HATE&&receivedMessage.sender != widget.user2.toString()) {
                       _showHateDialog();
                     }
-                    
                     chatMessages.add(receivedMessage);
                   } catch (e, stackTrace) {
                     print('error: $e');

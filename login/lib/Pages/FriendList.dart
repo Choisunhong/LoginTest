@@ -66,12 +66,13 @@ class _FriendListState extends State<FriendList> {
                 child: ListTile(
                   leading: const CircleAvatar(
                     radius: 20,
+                    backgroundColor: Color(0xFFB1EEB3),
                     backgroundImage: AssetImage('assets/logo.png'),
                   ),
                   title: Text(
                     friendList[index].friendName,
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
