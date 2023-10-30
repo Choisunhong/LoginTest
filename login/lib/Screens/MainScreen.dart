@@ -5,6 +5,7 @@ import 'package:login/Pages/ChatroomList.dart';
 import '../Member/Member.dart';
 import '../Pages/FriendList.dart';
 
+
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key, required this.mainloginMember}) : super(key: key);
   final Member mainloginMember;
@@ -15,8 +16,8 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
-  late TextEditingController _friendNameController; 
-
+  late TextEditingController _friendNameController;
+ 
   @override
   void initState() {
     super.initState();
@@ -25,17 +26,15 @@ class _MainScreenState extends State<MainScreen>
   }
 
   void addFriend(String friendName) async {
-    
     final response = await http.post(
       Uri.parse('http://localhost:8080/friend/follow/$friendName'),
       body: {
-        'id': widget.mainloginMember.id.toString(), 
-        'userName': widget.mainloginMember.userName,  
+        'id': widget.mainloginMember.id.toString(),
+        'userName': widget.mainloginMember.userName,
       },
     );
 
     if (response.statusCode == 200) {
-     
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -54,7 +53,6 @@ class _MainScreenState extends State<MainScreen>
         },
       );
     } else if (response.statusCode == 409) {
-     
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -132,8 +130,10 @@ class _MainScreenState extends State<MainScreen>
         child: TabBarView(
           controller: _controller,
           children: [
-            FriendList(loginId: loginMember.id,
-            userName:loginMember.userName),
+            FriendList(
+              loginId: loginMember.id,
+              userName: loginMember.userName,
+            ),
             ChatroomList(loginId: loginMember.id),
             Center(
               child: Column(
@@ -151,7 +151,7 @@ class _MainScreenState extends State<MainScreen>
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-           Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(

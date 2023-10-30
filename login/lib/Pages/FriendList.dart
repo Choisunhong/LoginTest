@@ -8,7 +8,7 @@ import '../Member/Member.dart';
 import 'IndividualPage.dart';
 
 class FriendList extends StatefulWidget {
-  const FriendList({Key? key, required this.loginId, required this.userName})
+  const FriendList({Key? key, required this.loginId, required this.userName, })
       : super(key: key);
   final int loginId;
   final String userName;

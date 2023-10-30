@@ -98,7 +98,7 @@ class _IndividualPageState extends State<IndividualPage> {
                     Map<String, dynamic> messageData = json.decode(frame.body!);
                     ChatMessage receivedMessage =
                         ChatMessage.fromJson(messageData);
-                    if (receivedMessage.msgType == MessageType.HATE&&receivedMessage.sender != widget.user2.toString()) {
+                    if (receivedMessage.msgType == MessageType.HATE&&receivedMessage.receiver != widget.user1.toString()) {
                       _showHateDialog();
                     }
                     chatMessages.add(receivedMessage);
