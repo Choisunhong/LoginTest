@@ -3,19 +3,22 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../DTO/FriendListResponse.dart';
 import '../Member/Member.dart';
 import 'IndividualPage.dart';
 
 class FriendList extends StatefulWidget {
-  const FriendList({Key? key, required this.loginId}) : super(key: key);
+  const FriendList({Key? key, required this.loginId, required this.userName})
+      : super(key: key);
   final int loginId;
+  final String userName;
 
   @override
   State<FriendList> createState() => _FriendListState();
 }
 
 class _FriendListState extends State<FriendList> {
-  List<Member> friendList = [];
+  List<FriendListResponse> friendList = [];
 
   @override
   void initState() {
@@ -24,19 +27,27 @@ class _FriendListState extends State<FriendList> {
   }
 
   void fetchFriends() async {
-    final response = await http.get(
-        Uri.parse('http://localhost:8080/user/${widget.loginId}/findFriends'));
+    try {
+      final response = await http.get(
+        Uri.parse(
+            'http://localhost:8080/friend/follow/list/${widget.userName}'),
+      );
 
-    if (response.statusCode == 200) {
-      List<dynamic> responseData = json.decode(utf8.decode(response.bodyBytes));
-      List<Member> friends =
-          responseData.map((data) => Member.fromJson(data)).toList();
+      if (response.statusCode == 200) {
+        List<dynamic> responseData =
+            json.decode(utf8.decode(response.bodyBytes));
+        List<FriendListResponse> friends = responseData
+            .map((data) => FriendListResponse.fromJson(data))
+            .toList();
 
-      setState(() {
-        friendList = friends;
-      });
-    } else {
-      print('오류 발생: ${response.statusCode}');
+        setState(() {
+          friendList = friends;
+        });
+      } else {
+        print('오류 발생: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error during fetching friends: $error');
     }
   }
 
@@ -55,15 +66,10 @@ class _FriendListState extends State<FriendList> {
                 child: ListTile(
                   leading: const CircleAvatar(
                     radius: 20,
-                    backgroundColor: Color.fromARGB(238, 45, 218, 68),
-                    child: Icon(
-                      Icons.account_circle,
-                      color: Colors.white,
-                      size: 18,
-                    ),
+                    backgroundImage: AssetImage('assets/logo.png'),
                   ),
                   title: Text(
-                    friendList[index].userName,
+                    friendList[index].friendName,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -84,7 +90,7 @@ class _FriendListState extends State<FriendList> {
         Uri.parse('http://localhost:8080/chatRoom/create'),
         body: {
           'user1': widget.loginId.toString(),
-          'user2': friendList[index].id.toString(),
+          'user2': friendList[index].friendId.toString(),
         },
       );
       if (response.statusCode == 200) {
@@ -105,7 +111,7 @@ class _FriendListState extends State<FriendList> {
                       MaterialPageRoute(
                         builder: (context) => IndividualPage(
                           user1: widget.loginId,
-                          user2: friendList[index].id,
+                          user2: friendList[index].friendId,
                           roomId: roomIdValue,
                         ),
                       ),
@@ -159,7 +165,7 @@ class _FriendListState extends State<FriendList> {
         MaterialPageRoute(
           builder: (context) => IndividualPage(
             user1: widget.loginId,
-            user2: friendList[index].id,
+            user2: friendList[index].friendId,
             roomId: roomIdValue,
           ),
         ),

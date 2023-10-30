@@ -15,23 +15,27 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen>
     with SingleTickerProviderStateMixin {
   late TabController _controller;
+  late TextEditingController _friendNameController; 
+
   @override
   void initState() {
     super.initState();
     _controller = TabController(length: 3, vsync: this, initialIndex: 0);
+    _friendNameController = TextEditingController();
   }
 
-  void addFriend() async {
+  void addFriend(String friendName) async {
+    
     final response = await http.post(
-      Uri.parse(
-          'http://localhost:8080/friend/follow/${widget.mainloginMember.userName}'),
+      Uri.parse('http://localhost:8080/friend/follow/$friendName'),
       body: {
-        'userName': widget.mainloginMember.userName,
+        'id': widget.mainloginMember.id.toString(), 
+        'userName': widget.mainloginMember.userName,  
       },
     );
 
     if (response.statusCode == 200) {
-      // 성공적으로 친구를 추가한 경우
+     
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -50,7 +54,7 @@ class _MainScreenState extends State<MainScreen>
         },
       );
     } else if (response.statusCode == 409) {
-      // 이미 친구인 경우
+     
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -74,11 +78,12 @@ class _MainScreenState extends State<MainScreen>
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     final loginMember = widget.mainloginMember;
     return Scaffold(
       appBar: AppBar(
-        //앱바 수정상황
+        // 앱바 수정상황
         automaticallyImplyLeading: false,
         backgroundColor: Color(0xffD3D3D3),
         title: SizedBox(
@@ -111,7 +116,8 @@ class _MainScreenState extends State<MainScreen>
         child: TabBarView(
           controller: _controller,
           children: [
-            FriendList(loginId: loginMember.id),
+            FriendList(loginId: loginMember.id,
+            userName:loginMember.userName),
             ChatroomList(loginId: loginMember.id),
             Center(
               child: Column(
@@ -153,12 +159,46 @@ class _MainScreenState extends State<MainScreen>
               ),
             ],
           ),
-          IconButton(
-            icon: Icon(
-              Icons.add,
-              color: const Color(0xFF51C878),
-            ),
-            onPressed: addFriend,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.add,
+                  color: const Color(0xFF51C878),
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('친구 추가'),
+                        content: TextField(
+                          controller: _friendNameController,
+                          decoration: InputDecoration(labelText: '친구 이름'),
+                        ),
+                        actions: [
+                          TextButton(
+                            child: Text('추가'),
+                            onPressed: () {
+                              String friendName = _friendNameController.text;
+                              addFriend(friendName);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: Text('취소'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),
