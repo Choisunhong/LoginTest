@@ -35,19 +35,24 @@ class LoginPage extends StatelessWidget {
       return;
     }
 
-    final response = await http.post(
-      Uri.parse('http://localhost:8080/member/login'),
+    /*
+final response = await http.post(
+      Uri.parse('http://localhost:8080/user/login'),
       body: {
         'userName': userName,
         'userPw': userPw,
       },
-    );
-
+    );*/
+ final response = await http.get(
+  Uri.parse('http://localhost:8080/user/login?userName=$userName&userPw=$userPw'),
+);
+print('userName: $userName');
+print('userPw: $userPw');
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
       final Member loginMember =
           Member.fromJson(responseData); //로그인 된 멤버 의 정보를 담는 객체에 정보 넣기
-
+          
       //int memberId = loginMemeber.id; 이런식으로 데이터사용
       showDialog(
         context: context,
@@ -98,7 +103,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.lightGreen, title: Text('로그인')),
+      appBar: AppBar(backgroundColor: const Color(0xFF51C878), title: Text('Welcome')),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -107,7 +112,7 @@ class LoginPage extends StatelessWidget {
             TextField(
               controller: userNameController,
               decoration: InputDecoration(
-                labelText: '아이디',
+                labelText: 'LoginId',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.all(12.0),
               ),
@@ -116,7 +121,7 @@ class LoginPage extends StatelessWidget {
             TextField(
               controller: userPwController,
               decoration: InputDecoration(
-                labelText: '비밀번호',
+                labelText: 'PassWord',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.all(12.0),
               ),
@@ -126,7 +131,7 @@ class LoginPage extends StatelessWidget {
             ElevatedButton(
               style: ButtonStyle(
                 backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.lightGreen),
+                    MaterialStateProperty.all<Color>(const Color(0xFF51C878)),
               ),
               onPressed: () {
                 loginUser(context);

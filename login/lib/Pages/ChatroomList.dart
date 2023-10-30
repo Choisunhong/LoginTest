@@ -11,6 +11,7 @@ class ChatroomList extends StatefulWidget {
   @override
   State<ChatroomList> createState() => _ChatroomListState();
 }
+
 class _ChatroomListState extends State<ChatroomList> {
   List<ChatRoom> chatRoomList = [];
 
@@ -41,31 +42,28 @@ class _ChatroomListState extends State<ChatroomList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: ListView.builder(
         itemCount: chatRoomList.length,
         itemBuilder: (context, index) {
           final chatRoom = chatRoomList[index];
 
           return ListTile(
-            title:Text('참여자:${chatRoom.user2}'),
-            onTap: () {Navigator.push(
+            title: Text('참여자:${chatRoom.user2}'),
+            onTap: () {
+              Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => IndividualPage(
-                    user1:widget.loginId,
+                    user1: widget.loginId,
                     user2: chatRoom.user2,
                     roomId: chatRoom.id,
                   ),
                 ),
               );
-             
             },
           );
         },
       ),
     );
   }
-  
-  
 }

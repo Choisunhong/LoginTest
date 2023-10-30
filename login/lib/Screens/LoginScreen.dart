@@ -13,12 +13,11 @@ class LoginScreen extends StatelessWidget {
         ),
         Image.asset(
           "assets/logowithText.png",
-          width: 200,
-          height: 200,
+          width: 300,
+          height: 300,
+        
         ),
-         Container(
-          height: 100,
-        ),
+        
         Container(
           width: 280, 
           height: 40,
@@ -29,7 +28,7 @@ class LoginScreen extends StatelessWidget {
           },
           style: ButtonStyle(
             backgroundColor:
-                MaterialStateProperty.all<Color>(Colors.lightGreen),
+                MaterialStateProperty.all<Color>(const Color(0xFF51C878)),
                 
                 ),
             
@@ -49,7 +48,7 @@ class LoginScreen extends StatelessWidget {
             },
             style: ButtonStyle(
               backgroundColor:
-                  MaterialStateProperty.all<Color>(Colors.black), // 검은색
+                  MaterialStateProperty.all<Color>( const Color(0xFF708333)), 
             ),
             child: Text('회원가입'),
           ),
