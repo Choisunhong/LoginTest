@@ -188,7 +188,7 @@ class _IndividualPageState extends State<IndividualPage> {
         String senderName = snapshot.data ?? '';
         Color backgroundColor = message.msgType == MessageType.HATE
             ? Colors.red
-            : Colors.lightGreen;
+            : const Color(0xFF51C878);
 
         return Container(
           margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
@@ -236,14 +236,16 @@ class _IndividualPageState extends State<IndividualPage> {
             child: TextField(
               controller: messageController,
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                   borderRadius : const BorderRadius.all(Radius.circular(30))
+                ),
                 hintText: '메시지를 입력하세요',
               ),
             ),
           ),
           SizedBox(width: 8.0),
           IconButton(
-            icon: Icon(Icons.send),
+            icon: Icon(Icons.send,color:const Color(0xFF51C878)),
             onPressed: () {
               final content = messageController.text;
               if (content.isNotEmpty) {
@@ -274,7 +276,7 @@ class _IndividualPageState extends State<IndividualPage> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 215, 222, 226),
       appBar: AppBar(
-        backgroundColor: Colors.lightGreen,
+        backgroundColor: const Color(0xFF51C878),
         leadingWidth: 70,
         leading: InkWell(
           onTap: () {
@@ -297,7 +299,6 @@ class _IndividualPageState extends State<IndividualPage> {
             ],
           ),
         ),
-        title: Text('Room ID: ${widget.roomId}'),
       ),
       body: Column(
         children: [

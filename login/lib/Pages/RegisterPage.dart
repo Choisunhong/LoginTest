@@ -82,7 +82,7 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.green, title: Text('회원가입')),
+      appBar: AppBar(backgroundColor: const Color(0xFF708333), title: Text('Sign Up')),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -91,7 +91,7 @@ class RegisterPage extends StatelessWidget {
             TextField(
               controller: userNameController,
               decoration: InputDecoration(
-                labelText: '사용자 이름',
+                labelText: 'ID',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.all(12.0),
               ),
@@ -100,7 +100,7 @@ class RegisterPage extends StatelessWidget {
             TextField(
               controller: userPwController,
               decoration: InputDecoration(
-                labelText: '비밀번호',
+                labelText: 'Password',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.all(12.0),
               ),
@@ -110,7 +110,7 @@ class RegisterPage extends StatelessWidget {
             ElevatedButton(
               style: ButtonStyle(
                 backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.lightGreen),
+                    MaterialStateProperty.all<Color>(const Color(0xFF708333)),
               ),
               onPressed: () {
                 registerUser(context);
@@ -118,7 +118,7 @@ class RegisterPage extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 12.0),
                 child: Text(
-                  '회원가입',
+                  'Sign Up',
                   style: TextStyle(fontSize: 16.0),
                 ),
               ),

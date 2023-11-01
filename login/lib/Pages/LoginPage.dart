@@ -112,7 +112,7 @@ print('userPw: $userPw');
             TextField(
               controller: userNameController,
               decoration: InputDecoration(
-                labelText: 'LoginId',
+                labelText: 'ID',
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.all(12.0),
               ),
@@ -139,7 +139,7 @@ print('userPw: $userPw');
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 12.0),
                 child: Text(
-                  '로그인',
+                  'Login',
                   style: TextStyle(fontSize: 16.0),
                 ),
               ),

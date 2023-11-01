@@ -32,7 +32,8 @@ class LoginScreen extends StatelessWidget {
                 
                 ),
             
-          child: Text('로그인'),
+          child: Text('Login',
+           style: TextStyle(fontSize: 17)),
         ),
         ),
         Container(
@@ -50,7 +51,8 @@ class LoginScreen extends StatelessWidget {
               backgroundColor:
                   MaterialStateProperty.all<Color>( const Color(0xFF708333)), 
             ),
-            child: Text('회원가입'),
+            child: Text('Sign Up',
+            style: TextStyle(fontSize: 17)),
           ),
         )
       ],
