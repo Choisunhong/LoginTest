@@ -26,7 +26,7 @@ class _FriendListState extends State<FriendList> {
     fetchFriends();
   }
 
-  void fetchFriends() async {
+   Future<void> fetchFriends() async {
     try {
       final response = await http.get(
         Uri.parse(
@@ -53,38 +53,40 @@ class _FriendListState extends State<FriendList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView.builder(
-        itemCount: friendList.length,
-        itemBuilder: (context, index) {
-          return Column(
-            children: [
-              InkWell(
-                onTap: () {
-                  _showCreateChatRoom(context, index);
-                },
-                child: ListTile(
-                  leading: const CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Color(0xFFB1EEB3),
-                    backgroundImage: AssetImage('assets/logo.png'),
-                  ),
-                  title: Text(
-                    friendList[index].friendName,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+    return RefreshIndicator(
+      onRefresh: fetchFriends, // fetchFriends를 호출하여 새로고침
+      child: Scaffold(
+        body: ListView.builder(
+          itemCount: friendList.length,
+          itemBuilder: (context, index) {
+            return Column(
+              children: [
+                InkWell(
+                  onTap: () {
+                    _showCreateChatRoom(context, index);
+                  },
+                  child: ListTile(
+                    leading: const CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Color(0xFFB1EEB3),
+                      backgroundImage: AssetImage('assets/logo.png'),
+                    ),
+                    title: Text(
+                      friendList[index].friendName,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }
-
   Future<int> createChatRoom(int index) async {
     try {
       final response = await http.post(
