@@ -284,17 +284,10 @@ class _IndividualPageState extends State<IndividualPage> {
           },
           child: Row(
             children: [
+              SizedBox(width: 10),
               Icon(
-                Icons.arrow_back,
+                Icons.arrow_back_ios_new,
                 size: 24,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                'Back',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
               ),
             ],
           ),

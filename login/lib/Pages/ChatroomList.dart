@@ -45,6 +45,25 @@ class _ChatroomListState extends State<ChatroomList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Row(
+          children: [
+            Image.asset('assets/logo.png', width: 30, height: 30),
+            SizedBox(width: 10),
+            Text(
+              '채팅목록',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black, // 원하는 색상으로 설정
+              ),
+            ),
+          ],
+        ),
+      ),
         body: ListView.builder(
       itemCount: chatRoomList.length,
       itemBuilder: (context, index) {

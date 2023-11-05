@@ -1,15 +1,20 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:http/http.dart' as http;
+import 'package:login/Pages/PersonalPage.dart';
 
 import '../DTO/FriendListResponse.dart';
 import '../Member/Member.dart';
 import 'IndividualPage.dart';
 
 class FriendList extends StatefulWidget {
-  const FriendList({Key? key, required this.loginId, required this.userName, })
-      : super(key: key);
+  const FriendList({
+    Key? key,
+    required this.loginId,
+    required this.userName,
+  }) : super(key: key);
   final int loginId;
   final String userName;
 
@@ -19,14 +24,15 @@ class FriendList extends StatefulWidget {
 
 class _FriendListState extends State<FriendList> {
   List<FriendListResponse> friendList = [];
-
+  late TextEditingController _friendNameController;
   @override
   void initState() {
     super.initState();
     fetchFriends();
+    _friendNameController = TextEditingController();
   }
 
-   Future<void> fetchFriends() async {
+  Future<void> fetchFriends() async {
     try {
       final response = await http.get(
         Uri.parse(
@@ -50,12 +56,98 @@ class _FriendListState extends State<FriendList> {
       print('Error during fetching friends: $error');
     }
   }
+void addFriend(String friendName) async {
+  final response = await http.post(
+    Uri.parse('http://localhost:8080/friend/follow/$friendName'),
+    body: {
+      'id': widget.loginId.toString(),
+      'userName': widget.userName,
+    },
+  );
+
+  if (response.statusCode == 200) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('친구 추가 성공'),
+          content: Text('친구가 성공적으로 추가되었습니다.'),
+          actions: [
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    fetchFriends();
+  } else if (response.statusCode == 409) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('친구 추가 실패'),
+          content: Text('이미 친구입니다.'),
+          actions: [
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  } else {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('친구 추가 실패'),
+          content: Text('존재하지 않은 회원입니다.'),
+          actions: [
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    print('오류 발생: ${response.statusCode}');
+  }
+}
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: fetchFriends, // fetchFriends를 호출하여 새로고침
+      onRefresh: fetchFriends,
       child: Scaffold(
+        appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Row(
+          children: [
+            Image.asset('assets/logo.png', width: 30, height: 30),
+            SizedBox(width: 10),
+            Text(
+              '친구목록',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black, // 원하는 색상으로 설정
+              ),
+            ),
+          ],
+        ),
+      ),
         body: ListView.builder(
           itemCount: friendList.length,
           itemBuilder: (context, index) {
@@ -84,9 +176,52 @@ class _FriendListState extends State<FriendList> {
             );
           },
         ),
+        floatingActionButton:
+         
+         SpeedDial(
+           backgroundColor: const Color(0xFF51C878),
+          animatedIcon: AnimatedIcons.menu_close,
+          children: [
+            SpeedDialChild(
+              child: Image.asset('assets/logo.png', width: 40, height: 40),
+              label: '친구 추가',
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('친구 추가'),
+                      content: TextField(
+                        controller: _friendNameController,
+                        decoration: InputDecoration(labelText: '친구 이름'),
+                      ),
+                      actions: [
+                        TextButton(
+                          child: Text('추가'),
+                          onPressed: () {
+                            String friendName = _friendNameController.text;
+                            addFriend(friendName);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: Text('취소'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
+
   Future<int> createChatRoom(int index) async {
     try {
       final response = await http.post(

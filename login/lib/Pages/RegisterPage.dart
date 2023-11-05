@@ -82,7 +82,24 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: const Color(0xFF708333), title: Text('Sign Up')),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF708333),
+        leadingWidth: 70,
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Row(
+            children: [
+              SizedBox(width: 10),
+              Icon(
+                Icons.arrow_back_ios_new,
+                size: 24,
+              ),
+            ],
+          ),
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
