@@ -56,130 +56,110 @@ class _FriendListState extends State<FriendList> {
       print('Error during fetching friends: $error');
     }
   }
-void addFriend(String friendName) async {
-  final response = await http.post(
-    Uri.parse('http://localhost:8080/friend/follow/$friendName'),
-    body: {
-      'id': widget.loginId.toString(),
-      'userName': widget.userName,
-    },
-  );
 
-  if (response.statusCode == 200) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('친구 추가 성공'),
-          content: Text('친구가 성공적으로 추가되었습니다.'),
-          actions: [
-            TextButton(
-              child: Text('확인'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
+  void addFriend(String friendName) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:8080/friend/follow/$friendName'),
+      body: {
+        'id': widget.loginId.toString(),
+        'userName': widget.userName,
       },
     );
-    fetchFriends();
-  } else if (response.statusCode == 409) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('친구 추가 실패'),
-          content: Text('이미 친구입니다.'),
-          actions: [
-            TextButton(
-              child: Text('확인'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  } else {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('친구 추가 실패'),
-          content: Text('존재하지 않은 회원입니다.'),
-          actions: [
-            TextButton(
-              child: Text('확인'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-    print('오류 발생: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('친구 추가 성공'),
+            content: Text('친구가 성공적으로 추가되었습니다.'),
+            actions: [
+              TextButton(
+                child: Text('확인'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      fetchFriends();
+    } else if (response.statusCode == 409) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('친구 추가 실패'),
+            content: Text('이미 친구입니다.'),
+            actions: [
+              TextButton(
+                child: Text('확인'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('친구 추가 실패'),
+            content: Text('존재하지 않은 회원입니다.'),
+            actions: [
+              TextButton(
+                child: Text('확인'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      print('오류 발생: ${response.statusCode}');
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: fetchFriends,
       child: Scaffold(
-        appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Row(
-          children: [
-            Image.asset('assets/logo.png', width: 30, height: 30),
-            SizedBox(width: 10),
-            Text(
-              '친구목록',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black, // 원하는 색상으로 설정
-              ),
-            ),
-          ],
-        ),
-      ),
         body: ListView.builder(
           itemCount: friendList.length,
           itemBuilder: (context, index) {
-            return Column(
-              children: [
-                InkWell(
-                  onTap: () {
-                    _showCreateChatRoom(context, index);
-                  },
-                  child: ListTile(
-                    leading: const CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Color(0xFFB1EEB3),
-                      backgroundImage: AssetImage('assets/logo.png'),
-                    ),
-                    title: Text(
-                      friendList[index].friendName,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+            return InkWell(
+              onTap: () {
+                _showCreateChatRoom(context, index);
+              },
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+                
+                child: ListTile(
+                  leading: CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Color(0xFFB1EEB3),
+                    backgroundImage: AssetImage('assets/logo.png'),
+                  ),
+                  title: Text(
+                    friendList[index].friendName,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-              ],
+              ),
             );
           },
         ),
-        floatingActionButton:
-         
-         SpeedDial(
-           backgroundColor: const Color(0xFF51C878),
+        floatingActionButton: SpeedDial(
+          backgroundColor: const Color(0xFF51C878),
           animatedIcon: AnimatedIcons.menu_close,
           children: [
             SpeedDialChild(
