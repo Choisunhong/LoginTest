@@ -35,6 +35,8 @@ class _PersonalPageState extends State<PersonalPage> {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> responseData = json.decode(response.body);
+        print('서버응답: $responseData');
+
         StatisticResponseDTO statisticDTO =
             StatisticResponseDTO.fromJson(responseData);
 
@@ -51,67 +53,113 @@ class _PersonalPageState extends State<PersonalPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundColor: const Color(0xFF51C878),
-                  child: Icon(
-                    Icons.person,
-                    size: 50,
-                    color: Colors.white,
-                  ),
+  return Scaffold(
+    body: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: const Color(0xFF51C878),
+                child: Icon(
+                  Icons.person,
+                  size: 50,
+                  color: Colors.white,
                 ),
-                SizedBox(width: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '이름: ${widget.userName}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Divider(
-              color: Colors.grey,
-              thickness: 0.5,
-              height: 30,
-            ),
-            Text(
-              '채팅 통계',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
               ),
-            ),
-            SizedBox(height: 30),
-            Container(
-                  width: 150,
-                  height: 150,
-                  child: CustomPaint(
-                    painter: PieChart(
-                      percentage: statisticResponse?.sta_hate ?? 0,
+              SizedBox(width: 20),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '이름: ${widget.userName}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  SizedBox(height: 10),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Divider(
+            color: Colors.grey,
+            thickness: 0.5,
+            height: 30,
+          ),
+          Text(
+            '채팅 통계',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 30),
+          Row(
+            children: [
+              Container(
+                width: 150,
+                height: 150,
+                child: CustomPaint(
+                  painter: PieChart(
+                    percentage: statisticResponse?.sta_hate ?? 0,
+                  ),
                 ),
-          ],
-        ),
+              ),
+              SizedBox(width: 40),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        color: const Color(0xFF51C878),
+                      ),
+                      SizedBox(width: 15),
+                      Text(
+                        'Clean: ${statisticResponse?.nClean ?? 0}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        color:const Color.fromARGB(255, 244, 54, 54),
+                      ),
+                      SizedBox(width: 15),
+                      Text(
+                        'Hate: ${statisticResponse?.nHate ?? 0}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
 
 class PieChart extends CustomPainter {
@@ -125,7 +173,7 @@ class PieChart extends CustomPainter {
     // 화면에 그릴 paint 정의
     Paint paint = Paint()
       ..color = const Color(0xFF51C878)
-      ..strokeWidth = 12.0
+      ..strokeWidth = 18.0
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
@@ -143,14 +191,14 @@ class PieChart extends CustomPainter {
     double arcAngle = 2 * pi * (percentage / 100.0);
 
     // 호를 그릴때 색 변경
-    paint..color = Colors.red;
+    paint..color = const Color.fromARGB(255, 244, 54, 54);
 
     // 호(arc)를 그린다.
     canvas.drawArc(Rect.fromCircle(center: center, radius: radius), -pi / 2,
         arcAngle, false, paint);
 
     // 텍스트를 화면에 표시한다.
-    drawText(canvas, size, '$percentage / 100');
+    drawText(canvas, size, '$percentage %');
   }
 
   // 원의 중앙에 텍스트를 적는다.
@@ -178,7 +226,7 @@ class PieChart extends CustomPainter {
 
   // 화면 크기에 비례하도록 텍스트 폰트 크기를 정한다.
   double getFontSize(Size size, String text) {
-    return size.width / text.length * textScaleFactor;
+    return size.width / (text.length+text.length) * textScaleFactor;
   }
 
   // 다르면 다시 그리도록
