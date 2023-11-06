@@ -12,11 +12,11 @@ class StatisticResponseDTO {
       required this.sta_hate});
   factory StatisticResponseDTO.fromJson(Map<String, dynamic> json) {
     return StatisticResponseDTO(
-      memberId: json['memberId'],
-      nClean: json['nClean'],
-      nHate: json['nHate'],
-      sta_clean: json['sta_clean'],
-      sta_hate: json['sta_hate'],
+      memberId: json['memberId']?? 0,
+      nClean: json['nClean']?? 0,
+      nHate: json['nHate']?? 0,
+      sta_clean: json['sta_clean']?? 0,
+      sta_hate: json['sta_hate']?? 0,
     );
   }
 }
