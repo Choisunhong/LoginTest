@@ -30,7 +30,7 @@ class _PersonalPageState extends State<PersonalPage> {
     try {
       final response = await http.get(
         Uri.parse(
-            'http://localhost:8080/statistic/messageType?memberId=${widget.loginId}'),
+            'https://46d1-175-118-225-161.ngrok-free.app/statistic/messageType?memberId=${widget.loginId}'),
       );
 
       if (response.statusCode == 200) {

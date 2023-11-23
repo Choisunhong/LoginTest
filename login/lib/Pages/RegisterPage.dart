@@ -31,7 +31,7 @@ class RegisterPage extends StatelessWidget {
     }
 
     final response = await http.post(
-      Uri.parse('http://localhost:8080/user/signup'),
+      Uri.parse('https://46d1-175-118-225-161.ngrok-free.app/user/signup'),
       body: {
         'userName': userName,
         'userPw': userPw,

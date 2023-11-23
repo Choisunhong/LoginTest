@@ -36,7 +36,7 @@ class _FriendListState extends State<FriendList> {
     try {
       final response = await http.get(
         Uri.parse(
-            'http://localhost:8080/friend/follow/list/${widget.userName}'),
+            'https://46d1-175-118-225-161.ngrok-free.app/friend/follow/list/${widget.userName}'),
       );
 
       if (response.statusCode == 200) {
@@ -59,7 +59,7 @@ class _FriendListState extends State<FriendList> {
 
   void addFriend(String friendName) async {
     final response = await http.post(
-      Uri.parse('http://localhost:8080/friend/follow/$friendName'),
+      Uri.parse('https://46d1-175-118-225-161.ngrok-free.app/friend/follow/$friendName'),
       body: {
         'id': widget.loginId.toString(),
         'userName': widget.userName,
@@ -205,7 +205,7 @@ class _FriendListState extends State<FriendList> {
   Future<int> createChatRoom(int index) async {
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8080/chatRoom/create'),
+        Uri.parse('https://46d1-175-118-225-161.ngrok-free.app/chatRoom/create'),
         body: {
           'user1': widget.loginId.toString(),
           'user2': friendList[index].friendId.toString(),

@@ -24,7 +24,7 @@ class _ChatroomListState extends State<ChatroomList> {
 
   void fetchChatroomList() async {
     final response = await http.get(
-      Uri.parse('http://localhost:8080/chatRoom/find/user/${widget.loginId}'),
+      Uri.parse('https://46d1-175-118-225-161.ngrok-free.app/chatRoom/find/user/${widget.loginId}'),
     );
 
     if (response.statusCode == 200) {

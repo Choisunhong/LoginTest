@@ -85,7 +85,7 @@ class _IndividualPageState extends State<IndividualPage> {
   void _initSocketConnection() {
     socketHandler.stompClient = StompClient(
       config: StompConfig(
-        url: 'ws://localhost:8080/ws-stomp',
+        url: 'wss://46d1-175-118-225-161.ngrok-free.app/ws-stomp',
         onConnect: (StompFrame connectFrame) {
           print("Connected to WebSocket server!");
           socketHandler.stompClient.subscribe(
@@ -122,7 +122,7 @@ class _IndividualPageState extends State<IndividualPage> {
   //과거 채팅내역 fetch
   void fetchChatMessages() async {
     final response = await http.get(
-      Uri.parse('http://localhost:8080/message/find/${widget.roomId}'),
+      Uri.parse('https://46d1-175-118-225-161.ngrok-free.app/message/find/${widget.roomId}'),
     );
 
     if (response.statusCode == 200) {
@@ -164,26 +164,14 @@ class _IndividualPageState extends State<IndividualPage> {
     print('Sent MessageType: ${message.msgType}');
   }
 
-  Future<String> getUserName(int userId) async {
-    final response = await http.get(
-      Uri.parse('http://localhost:8080/user/$userId'),
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> responseData =
-          json.decode(utf8.decode(response.bodyBytes));
-      return responseData['userName'];
-    } else {
-      throw Exception('Failed to load user name');
-    }
-  }
+ 
 
 //채팅메세지UI 위젯
   Widget _buildMessageWidget(ChatMessage message) {
     bool isSentByUser = message.sender == widget.user1.toString();
     final String formattedDate = message.createdAt;
     return FutureBuilder<String>(
-      future: getUserName(int.parse(message.sender)),
+      
       builder: (context, snapshot) {
         String senderName = snapshot.data ?? '';
         Color backgroundColor = message.msgType == MessageType.HATE
@@ -224,7 +212,7 @@ class _IndividualPageState extends State<IndividualPage> {
       },
     );
   }
-  //유저 이름 불러오기
+
 
   Widget _buildInputField() {
     return Container(

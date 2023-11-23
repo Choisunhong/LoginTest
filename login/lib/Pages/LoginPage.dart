@@ -43,8 +43,8 @@ final response = await http.post(
         'userPw': userPw,
       },
     );*/
- final response = await http.get(
-  Uri.parse('http://localhost:8080/user/login?userName=$userName&userPw=$userPw'),
+final response = await http.get(
+  Uri.parse('https://46d1-175-118-225-161.ngrok-free.app/user/login?userName=$userName&userPw=$userPw'),
 );
 print('userName: $userName');
 print('userPw: $userPw');
